@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sodagroup.mapper.SongListMapper">
+
+    <!--查询所有歌单-->
+    <select id="selectAllList">
+        select sl.id,user_id,title,introduction,collected_nums,picture_path
+        from songList sl
+    </select>
+    <!--通过标题严格查询歌单-->
+    <select id="selectListByTitle">
+        select sl.id,user_id,title,introduction,collected_nums,picture_path
+        from songList sl
+        where title = #{title}
+    </select>
+    <select id="selectListByTitleAndUserId">
+        select sl.id,user_id,title,introduction,collected_nums,picture_path
+        from songList sl
+        INNER JOIN `user` u on sl.user_id = u.id
+        where title = #{title} and user_id=#{userId}
+    </select>
+    <select id="selectListByTitleLike" resultMap="songListDTOResultMap">
+        select sl.id,user_id,sl.title,sl.collected_nums
+        from songList sl
+        where title like concat('%',#{title},'%')
+    </select>
+
+    <resultMap id="songListDTOResultMap" type="com.sodagroup.pojo.DTO.SongListDTO">
+        <result property="id" column="id"/>
+        <result property="author" column="name"/>
+        <result property="title" column="title"/>
+        <result property="collectedNums" column="collected_nums"/>
+    </resultMap>
+    <!--指定歌单-->
+    <select id="selectListById">
+        select sl.id,name,title,introduction,collected_nums,picture_path
+        from songList sl
+        inner join user u on u.id = sl.user_id
+        where sl.id = #{id}
+    </select>
+    <!--歌单排行榜-->
+    <select id="selectSongListRank" resultMap="songListRankDTOResultMap">
+        select id,picture_path,title
+        from songList
+        order by collected_nums
+        limit 3
+    </select>
+    <resultMap id="songListRankDTOResultMap" type="com.sodagroup.pojo.DTO.SongListRankDTO">
+        <result property="id" column="id"/>
+        <result property="title" column="title"/>
+        <result property="picturePath" column="picture_path"/>
+    </resultMap>
+
+    <insert id="insertList" useGeneratedKeys="true" keyProperty="id">
+        insert into songList (user_id,title,introduction,collected_nums,picture_path)
+        values (#{userId},#{title},#{introduction},#{collectedNums},#{picturePath})
+    </insert>
+    <delete id="deleteList">
+        delete from songList where id = #{id}
+    </delete>
+
+    <update id="updateList">
+        update songList
+        set
+            user_id = #{userId},
+            title = #{title},
+            introduction = #{introduction},
+            picture_path=#{picturePath}
+        where id = #{id}
+    </update>
+</mapper>

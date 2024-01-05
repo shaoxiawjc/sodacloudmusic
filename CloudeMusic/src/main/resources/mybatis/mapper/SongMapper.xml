@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sodagroup.mapper.SongMapper">
+    <!--查询全部歌曲信息-->
+    <select id="selectAllSongs" >
+        select id,name,picture_path,song_path,singer,issuing_date,upload_id,collect_nums
+        from song
+        limit #{startIndex},#{pageSize}
+    </select>
+    <!--查询指定id信息-->
+    <select id="selectSongById" >
+        select id,name,picture_path,song_path,singer,issuing_date,upload_id,collect_nums
+        from song
+        where id = #{id}
+    </select>
+    <!--查询同名歌曲信息-->
+    <select id="selectSongByName" >
+        select id,name,picture_path,song_path,singer,issuing_date,upload_id,collect_nums
+        from song
+        where name = #{name}
+    </select>
+    <!--查询相似名字歌曲信息-->
+    <select id="selectSongByNameLike" resultMap="songDTOResultMap">
+        select id,name,singer,collect_nums
+        from song
+        where name like concat('%',#{name},'%');
+    </select>
+
+    <resultMap id="songDTOResultMap" type="com.sodagroup.pojo.DTO.SongDTO">
+        <result property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="singer" column="singer"/>
+        <result property="collectNums" column="collect_nums"/>
+    </resultMap>
+    <!--根据上传uploadId查询-->
+    <select id="selectSongByUserId">
+        select id,name,picture_path,song_path,singer,issuing_date,upload_id,collect_nums
+        from song
+        where upload_id = #{uploadId}
+    </select>
+
+    <select id="selectSongRank" resultMap="songRankDTOResultMap">
+        select id,picture_path,singer,name
+        from song
+        order by collect_nums
+        limit 3
+    </select>
+
+    <select id="selectNewSongRank" resultMap="songRankDTOResultMap">
+        select id,picture_path,singer,name
+        from song
+        order by issuing_date DESC
+    </select>
+
+    <resultMap id="songRankDTOResultMap" type="com.sodagroup.pojo.DTO.SongRankDTO">
+        <result property="id" column="id"/>
+        <result property="singer" column="singer"/>
+        <result property="picturePath" column="picture_path"/>
+        <result property="name" column="name"/>
+    </resultMap>
+
+
+
+
+    <insert id="addSong" useGeneratedKeys="true" keyProperty="id">
+        insert into song (name,picture_path,song_path,singer,issuing_date,upload_id,collect_nums)
+        values (#{name},#{picturePath},#{songPath},#{singer},#{issuingDate},#{uploadId},#{collectNums})
+    </insert>
+
+    <delete id="deleteSong">
+        delete from song where id = #{id}
+    </delete>
+
+    <update id="updateSong">
+        update song
+        set name = #{name},
+            picture_path = #{picturePath},
+            song_path = #{songPath},
+            singer=#{singer},
+            issuing_date=#{issuingDate},
+            upload_id = #{uploadId},
+            collect_nums=#{collectNums}
+        where id = #{id}
+    </update>
+
+
+</mapper>

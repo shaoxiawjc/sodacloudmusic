@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sodagroup.mapper.CommentUserMapper">
+
+
+    <select id="selectAllCommentUser">
+        select id,comment_id,user_id from commentuser
+    </select>
+
+    <select id="selectCommentUserByUserId" >
+        select id,comment_id,user_id
+        from commentuser
+        where user_id = #{userId}
+    </select>
+    <select id="selectCommentUserByCommentId">
+        select id,comment_id,user_id
+        from commentuser
+        where comment_id = #{commentId}
+    </select>
+
+    <select id="selectCommentUserByUserIdAndCommentId">
+        select id,comment_id,user_id
+        from commentuser
+        where user_id = #{userId} and comment_id = #{commentId}
+    </select>
+
+
+    <insert id="insertCommentUser" useGeneratedKeys="true" keyProperty="id">
+        insert into commentuser (comment_id,user_id)
+        values (#{commentId},#{userId})
+    </insert>
+
+    <delete id="deleteCommentUser">
+        delete from commentuser where user_id = #{userId} and comment_id = #{commentId}
+    </delete>
+
+
+</mapper>

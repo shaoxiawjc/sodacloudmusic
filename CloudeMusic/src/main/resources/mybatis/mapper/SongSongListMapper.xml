@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sodagroup.mapper.SongSongListMapper">
+    <select id="selectAllSongSongList">
+        select id,list_id,song_id
+        from songsonglist
+    </select>
+    <select id="selectSongSongListById">
+        select id,list_id,song_id
+        from songsonglist
+        where id = #{id}
+    </select>
+    <select id="selectSongSongListByListId">
+        select id,list_id,song_id
+        from songsonglist
+        where list_id = #{listId}
+    </select>
+    <select id="selectSongSongListBySongId">
+        select id,list_id,song_id
+        from songsonglist
+        where list_id = #{listId} and song_id = #{songId}
+    </select>
+
+    <insert id="insertSongSongList" useGeneratedKeys="true" keyProperty="id">
+        insert into songsonglist (list_id,song_id)
+        values (#{listId},#{songId})
+    </insert>
+
+    <delete id="deleteSongSongListById">
+        delete from songsonglist
+        where id = #{id}
+    </delete>
+    <delete id="deleteSongSongListByListId">
+        delete from songsonglist
+        where list_id = #{listId}
+    </delete>
+    <delete id="deleteSongSongListByListIdAndSongId">
+        delete from songsonglist
+        where list_id = #{listId} and song_id #{songId}
+    </delete>
+
+    <update id="updateSongSongListMapper">
+        update songsonglist
+        set
+            list_id = #{listId},
+            song_id #{songId}
+        where
+            id = #{id}
+    </update>
+
+
+</mapper>
