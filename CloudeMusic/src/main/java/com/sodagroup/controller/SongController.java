@@ -15,6 +15,7 @@ import com.sodagroup.service.SongService;
 import com.sodagroup.utils.DownloadUtils;
 import com.sodagroup.utils.FileUtils;
 import com.sodagroup.utils.UploadUtils;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -114,8 +115,8 @@ public class SongController {
 	 * 获取登录用户的上传的歌单的信息
 	 * */
 	@PostMapping("/selectUploadMusic")
-	public ResponseEntity<List<Song>> selectUploadMusic(HttpSession session){
-		Integer userId = (Integer)session.getAttribute("userId");
+	public ResponseEntity<List<Song>> selectUploadMusic(HttpServletRequest httpServletRequest){
+		Integer userId = (Integer) httpServletRequest.getSession().getAttribute("userId");
 		return ResponseEntity.ok(songService.selectSongByUploadId(userId));
 	}
 
@@ -135,8 +136,9 @@ public class SongController {
 													   @RequestParam("music") MultipartFile music,
 													   @RequestParam("name") String name,
 													   @RequestParam("singer") String singer,
-													   HttpSession session) throws IOException {
+													   HttpServletRequest httpServletRequest) throws IOException {
 		HashMap<String, String> map = new HashMap<>();
+		Integer userId = (Integer) httpServletRequest.getSession().getAttribute("userId");
 		// 判断文件按是否为空
 		if (img.isEmpty()||music.isEmpty()){
 			map.put("msg","please select a file to upload");
@@ -158,7 +160,7 @@ public class SongController {
 		}
 		String imgURL = UploadUtils.uploadFile(img,"musicImg");
 		String musicURL = UploadUtils.uploadFile(music,"musicResource");
-		songService.addSong(new Song(name,imgURL,musicURL,singer,new Date(),(Integer) session.getAttribute("userId"),0));
+		songService.addSong(new Song(name,imgURL,musicURL,singer,new Date(),userId,0));
 		map.put("imgURL",imgURL);
 		map.put("musicURL",musicURL);
 		return ResponseEntity.ok(map);

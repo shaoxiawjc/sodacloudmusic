@@ -4,8 +4,10 @@ import com.sodagroup.pojo.SongList;
 import com.sodagroup.pojo.User;
 import com.sodagroup.service.SongListService;
 import com.sodagroup.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -47,21 +49,18 @@ public class UserController {
 	@CrossOrigin
 	@PostMapping("/user/login")
 	public ResponseEntity<Boolean> login(
-						@RequestParam("name") String name,
-						@RequestParam("password") String password,
-						HttpSession session){
-		String sessionId = session.getId();
+			@RequestParam("name") String name,
+			@RequestParam("password") String password,
+			HttpServletRequest httpServletRequest){
 		System.out.println(name+password);
 		Map<String,Object> map = userService.loginUser(name,password);
 		if (map == null){
 			System.out.println("false");
 			return ResponseEntity.ok(false);
 		}else {
-			session.setAttribute("userId",map.get("userId"));
-			session.setAttribute("userName",map.get("userName"));
 			Map<String, String> response = new HashMap<>();
-			response.put("sessionId", sessionId);
 			System.out.println("true");
+			httpServletRequest.getSession().setAttribute("userId",map.get("userId"));
 			return ResponseEntity.ok(true);
 		}
 	}

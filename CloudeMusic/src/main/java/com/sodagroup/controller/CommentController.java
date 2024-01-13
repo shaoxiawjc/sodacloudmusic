@@ -5,6 +5,7 @@ import com.sodagroup.pojo.CommentUser;
 import com.sodagroup.pojo.DTO.CommentRankDTO;
 import com.sodagroup.pojo.DTO.CommentResponseDTO;
 import com.sodagroup.service.CommentService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -45,10 +46,8 @@ public class CommentController {
 	@CrossOrigin
 	@PostMapping ("/selectComment")
 	public ResponseEntity<List<CommentResponseDTO>> selectComment(@RequestParam("songId") int songId,
-																  HttpSession session,
-																  @CookieValue(name="JSESSIONID",defaultValue = "-1") String user){
-//		Integer userId = (Integer)session.getAttribute("userId");
-		int userId = Integer.parseInt(user);
+																  HttpServletRequest httpServletRequest){
+		Integer userId = (Integer) httpServletRequest.getSession().getAttribute("userId");
 		System.out.println(userId+" "+songId);
 		List<CommentResponseDTO> commentResponseDTOS = commentService.selectResponseComment(songId, userId);
 		return ResponseEntity.ok(commentResponseDTOS);
@@ -60,8 +59,8 @@ public class CommentController {
 	 * */
 	@GetMapping("/collectComment")
 	public ResponseEntity<CommentUser> collectComment(@RequestParam("id") int id,
-											  HttpSession session){
-		int userId = (Integer)session.getAttribute("userId");
+													  HttpServletRequest httpServletRequest){
+		Integer userId = (Integer) httpServletRequest.getSession().getAttribute("userId");
 		CommentUser commentUser = new CommentUser(id, userId);
 		commentService.collectComment(commentUser);
 		return ResponseEntity.ok(commentUser);
@@ -72,8 +71,8 @@ public class CommentController {
 	 * */
 	@GetMapping("/cancelCollect")
 	public ResponseEntity<String> cancelCollect(@RequestParam("id") int id,
-												HttpSession session){
-		int userId = (Integer)session.getAttribute("userId");
+												HttpServletRequest httpServletRequest){
+		Integer userId = (Integer) httpServletRequest.getSession().getAttribute("userId");
 		CommentUser commentUser = new CommentUser(id, userId);
 		commentService.cancelCollect(commentUser);
 		return ResponseEntity.ok("取消收藏");
@@ -85,12 +84,9 @@ public class CommentController {
 	@PostMapping("/addComment")
 	public ResponseEntity<Boolean> addComment(@RequestParam("id") int id,
 											  @RequestParam("detail") String detail,
-											  HttpSession session,
-											  @CookieValue(name="JSESSIONID",defaultValue = "-1") String userId){
-//		Integer userId = (Integer) session.getAttribute("userId");
-		int user = Integer.parseInt(userId);
-		System.out.println(user);
-		Comment comment = new Comment(id, detail, user, new Date(), 0);
+											  HttpServletRequest httpServletRequest){
+		Integer userId = (Integer) httpServletRequest.getSession().getAttribute("userId");
+		Comment comment = new Comment(id, detail, userId, new Date(), 0);
 		commentService.addComment(comment);
 		return ResponseEntity.ok(true);
 	}

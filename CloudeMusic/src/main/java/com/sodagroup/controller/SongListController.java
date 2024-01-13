@@ -8,6 +8,7 @@ import com.sodagroup.service.SongListService;
 import com.sodagroup.utils.DeleteFileUtils;
 import com.sodagroup.utils.FileUtils;
 import com.sodagroup.utils.UploadUtils;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,8 +86,8 @@ public class SongListController {
 	public ResponseEntity<Boolean> createList(@RequestParam String title,
 										  @RequestParam String introduction,
 										  @RequestParam("img") MultipartFile img,
-										  HttpSession session) throws IOException {
-		int userId = (Integer) session.getAttribute("userId");
+										  HttpServletRequest request) throws IOException {
+		int userId = (Integer) request.getSession().getAttribute("userId");
 		HashMap<String, String> map = new HashMap<>();
 		if (img.isEmpty()){
 			map.put("msg","please select a file to upload");
@@ -114,8 +115,8 @@ public class SongListController {
 											  @RequestParam("id") int id,
 											  @RequestParam("collectedNums") int collectedNums,
 											   @RequestParam("img") MultipartFile img,
-											  HttpSession session) throws IOException {
-		Integer userId = (Integer) session.getAttribute("userId");
+											  HttpServletRequest request) throws IOException {
+		Integer userId = (Integer) request.getSession().getAttribute("request");
 		HashMap<String, String> map = new HashMap<>();
 		if (img.isEmpty()){
 			map.put("msg","please select a file to upload");
@@ -145,10 +146,10 @@ public class SongListController {
 	 * */
 	@CrossOrigin
 	@GetMapping("/collectSongList")
-	public ResponseEntity<ListUser> collectSongList(HttpSession session,
+	public ResponseEntity<ListUser> collectSongList(HttpServletRequest request,
 													@RequestParam("songListId") int songListId){
 
-		Integer userId = (Integer) session.getAttribute("userId");
+		Integer userId = (Integer)request.getSession().getAttribute("userId");
 		ListUser listUser = new ListUser(userId, songListId);
 		songListService.collectSongList(listUser);
 		return ResponseEntity.ok(listUser);
