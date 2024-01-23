@@ -18,8 +18,8 @@ public class DeleteFileUtils {
 	public static void deleteFile(String url,String folderName){
 		// 地域结点
 		String endPoint = "https://oss-cn-guangzhou.aliyuncs.com";
-		String accessKeyId = "LTAI5tKZaNsujUjisLPJD7Cg";
-		String accessKeySecret = "H9dmnmiOTPGfV0RmHvbmPXkZBz2OMX";
+		String accessKeyId = "";
+		String accessKeySecret = "";
 		// OSS客户端对象
 		OSS ossClient = new OSSClientBuilder().build(endPoint, accessKeyId, accessKeySecret);
 
